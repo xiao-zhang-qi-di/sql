@@ -6,10 +6,10 @@ from django.db import models
 # 1.工程师: 可以提交SQL上线单的工程师们，username字段为登录用户名，display字段为展示的中文名
 # 2.审核人: 可以审核并执行SQL上线单的管理者、高级工程师、系统管理员们
 class users(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    display = models.CharField(max_length=50)
-    role = models.CharField(max_length=20, choices=(
+    username = models.CharField('用户名', max_length=50)
+    password = models.CharField('密码', max_length=50)
+    display = models.CharField('显示的中文名', max_length=50)
+    role = models.CharField('角色', max_length=20, choices=(
         ('工程师', '工程师'),
         ('审核人', '审核人')
     ), default='工程师')
@@ -20,13 +20,13 @@ class users(models.Model):
 
 # 各个线上主库地址
 class master_config(models.Model):
-    cluster_name = models.CharField(max_length=50)
-    master_host = models.CharField(max_length=50)
-    master_port = models.IntegerField(default=3306)
-    master_user = models.CharField(max_length=50)
-    master_password = models.CharField(max_length=50)
-    create_time = models.DateTimeField(auto_now_add=True)
-    update_time = models.DateTimeField(auto_now=True)
+    cluster_name = models.CharField('集群名称', max_length=50)
+    master_host = models.CharField('主库地址', max_length=50)
+    master_port = models.IntegerField('主库端口', default=3306)
+    master_user = models.CharField('登录主库的用户名', max_length=50)
+    master_password = models.CharField('登录主库的密码', max_length=50)
+    create_time = models.DateTimeField('创建时间', auto_now_add=True)
+    update_time = models.DateTimeField('更新时间', auto_now=True)
 
     def __str__(self):
         return self.cluster_name
@@ -34,10 +34,10 @@ class master_config(models.Model):
 
 # 存放各个SQL上线工单的详细内容，可定期归档或清理历史数据，也可通过alter table workflow row_format=compressed; 来进行压缩
 class workflow(models.Model):
-    workflow_name = models.CharField(max_length=50)
-    engineer = models.CharField(max_length=50)
-    review_man = models.CharField(max_length=50)
-    create_time = models.DateTimeField(auto_now_add=True)
+    workflow_name = models.CharField('工单内容', max_length=50)
+    engineer = models.CharField('发起人', max_length=50)
+    review_man = models.CharField('审核人', max_length=50)
+    create_time = models.DateTimeField('创建时间', auto_now_add=True)
     finish_time = models.DateTimeField()
     status = models.CharField(max_length=50, choices=(
         ('已正常结束', '已正常结束'),
