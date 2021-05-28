@@ -7,7 +7,8 @@ leftMenuBtns = (
 
 def global_info(request):
     """存放用户、会话信息等"""
+    loginUser = request.session.get('login_username', "匿名用户")
     return {
-        'loginUser': request.user,
+        'loginUser': loginUser,
         'leftMenuBtns': leftMenuBtns,
     }

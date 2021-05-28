@@ -11,6 +11,11 @@ from .models import users
 def login(request):
     return render(request, 'login.html')
 
+def logout(request):
+    if request.session.get('login_username', False):
+        del request.session['login_username']
+    return render(request, 'login.html')
+
 # ajax接口, 登录页面调用, 用来验证用户名密码
 # 取消csrf—token验证
 @csrf_exempt
@@ -35,6 +40,7 @@ def authenticate(request):
 
     login_user = users.objects.filter(username=strUsername, password=strPassword)
     if len(login_user) == 1:
+        request.session['login_username'] = strUsername
         result = {
             "status": 0,
             "msg": "ok",
