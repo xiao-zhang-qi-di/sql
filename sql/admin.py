@@ -3,7 +3,7 @@ from .models import users, master_config, workflow
 
 # Register your models here.
 class usersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'username', 'display', 'role')
+    list_display = ('id', 'username', 'display', 'role', 'password')
     search_fields = ['id', 'username', 'display', 'role']
 
 
