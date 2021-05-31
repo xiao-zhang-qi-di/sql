@@ -3,6 +3,7 @@ import re
 import time
 
 from django import http
+from django.contrib.auth.hashers import check_password
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 
@@ -29,7 +30,7 @@ def logout(request):
 # 取消csrf—token验证
 @csrf_exempt
 def authenticate(request):
-    """认证机制做的非常简单, 密码没有加密, 建议类似md5单项加密即可"""
+    """认证机制做的非常简单"""
     # 判断当前是否为 AJAX 请求
     if request.is_ajax():
         strUsername = request.POST.get('username')
@@ -47,8 +48,9 @@ def authenticate(request):
         }
         return http.HttpResponse(json.dumps(result), content_type="application/json")
 
-    login_user = users.objects.filter(username=strUsername, password=strPassword)
-    if len(login_user) == 1:
+    correct_users = users.objects.filter(username=strUsername)
+    if len(correct_users) == 1 and check_password(strPassword, correct_users[0].password) == True:
+        #调用了django内置函数check_password函数检测输入的密码是否与django默认的PBKDF2算法相匹配
         request.session['login_username'] = strUsername
         result = {
             "status": 0,
