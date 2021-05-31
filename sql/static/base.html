@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>自动化运维平台</title>
     {% load staticfiles %}
+    <meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 引入Boostrap -->
     <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}">
@@ -55,7 +56,7 @@
                         <a href="{{ menu.url }}" class="list-group-item"
                     {% endif %}
                     
-                    {% if menu.key == 'masterconfig' or menu.key == 'userconfig'%}
+                    {% if menu.key == 'masterconfig' or menu.key == 'userconfig' or menu.key == 'workflowconfig'%}
                         target="_blank"><span class="{{ menu.class }}">&nbsp;{{ menu.name }}</span></a>
                     {% else %}
                         ><span class="{{ menu.class }}">&nbsp;{{ menu.name }}</span></>

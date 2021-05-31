@@ -99,7 +99,7 @@ DATABASES = {
 LANGUAGE_CODE = 'en-us'
 
 # TIME_ZONE = 'UTC'
-TIME_ZONE = None
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -112,6 +112,8 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 #inception组件所在的地址
 INCEPTION_HOST = '172.16.5.7'

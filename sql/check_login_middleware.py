@@ -1,3 +1,5 @@
+import re
+
 from django.http import HttpResponseRedirect
 
 class CheckLoginMiddleware(object):
@@ -10,5 +12,7 @@ class CheckLoginMiddleware(object):
             # http://127.0.0.1:8000/200/?type=20
             # request.get_full_path()返回的是 /200/?type=20 (获取当前url, 包含参数)
             # request.path返回的是 /200 (获取当前url, 不包含参数)
-            if request.path not in ('/login/', '/authenticate/'):
+
+            # 以下是不用跳转到login页面的url白名单
+            if request.path not in ('/login/', '/authenticate/') and re.match(r"/admin/\w*", request.path) is None:
                 return HttpResponseRedirect('/login/')

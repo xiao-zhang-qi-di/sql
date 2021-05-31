@@ -149,8 +149,9 @@ def submitSql(request):
         listDb = dao.getAlldbByCluster(masterHost, masterPort, masterUser, masterPassword)
         dictAllClusterDb[clusterName] = listDb
 
-    # 获取所有的审核人
-    reviewMen = users.objects.filter(role='审核人')
+    # 获取所有的审核人, 当前登录用户不可以审核
+    loginUser = request.session.get('login_username', False)
+    reviewMen = users.objects.filter(role='审核人').exclude(username=loginUser)
     if len(reviewMen) == 0:
         context = {'errMsg': '审核人为0, 请配置审核人'}
         return render(request, 'error.html', context)
@@ -171,6 +172,9 @@ def autoreview(request):
     # 服务器端参数验证
     if sqlContent is None or workflowName is None or clusterName is None or isBackup is None or reviewMan is None:
         context = {'errMsg': '页面提交参数可能为空'}
+        return render(request, 'error.html', context)
+    elif sqlContent[-1] != ";":
+        context = {'errMsg': "SQL语句结尾没有以;结尾，请后退重新修改并提交！"}
         return render(request, 'error.html', context)
 
     # 交给inception进行自动审核
@@ -236,6 +240,11 @@ def execute(request):
         context = {'errMsg': '当前登录用户不是审核人, 请重新登录'}
         return render(request, 'error.html', context)
 
+    # 服务器端二次验证, 当前工单状态必须为等待人工审核
+    if workflowDetail.status != Const.workflowStatus['manreviewing']:
+        context = {'errMsg': '当前工单状态不是等待人工审核中, 请刷新当前页面'}
+        return render(request, 'error.html', context)
+
     dictConn = getMasterConnStr(clusterName)
 
     # 将流程状态修改为执行中, 并更新reviewok_time字段
@@ -267,9 +276,13 @@ def cancel(request):
 
     # 服务器端二次验证, 如果正在执行终止动作的当前登录用用户不是发起人也不是审核人, 则异常
     loginUser = request.session.get('login_username', False)
-    if loginUser is None or loginUser != workflowDetail.review_man or loginUser != workflowDetail.engineer:
+    if loginUser is None or (loginUser != workflowDetail.review_man and loginUser != workflowDetail.engineer):
         context = {'errMsg': '当前登录用户不是审核人也不是发起人, 请重新登录'}
         return render(request, 'error.html', context)
+
+    # 服务器端二次验证, 如果当前单子状态是结束状态, 则不能发起终止
+    if workflowDetail.status in (Const.workflowStatus['abort'], Const.workflowStatus['finish'], Const.workflowStatus['autoreviewwrong'], Const.workflowStatus['exception']):
+        return HttpResponseRedirect('/detail/' + str(workflowId) + '/')
 
     workflowDetail.status = Const.workflowStatus['abort']
     workflowDetail.save()

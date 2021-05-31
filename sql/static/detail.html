@@ -23,19 +23,19 @@
                 <td>{{ workflowDetail.create_time }}</td>
                 <td>{{ workflowDetail.finish_time }}</td>
                 <td>{{ workflowDetail.is_backup }}</td>
-                <td>{{ workflowDetail.status }}</td>
+                <td><font><B>{{ workflowDetail.status }}</B></font></td>
             </tr>
         </tbody>
     </table>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>ID</th>
+                <th width="40px">ID</th>
                 <th>SQL内容</th>
-                <th>自动审核结果</th>
-                <th>扫描/影响行数</th>
-                <th>执行耗时</th>
-                <th>执行状态</th>
+                <th width="110px">自动审核结果</th>
+                <th width="110px">扫描/影响行数</th>
+                <th width="110px">执行耗时</th>
+                <th width="110px">执行状态</th>
             </tr>
         </thead>
         <tbody>
@@ -70,6 +70,8 @@
             <input type="hidden" name="workflowid" value="{{ workflowDetail.id }}">
             <input type="submit" id="btnRollback" type="button" class="btn btn-default" data-loading-text="Loading..." value="查看回滚SQL">
         </form>
+        {% elif workflowDetail.status == '自动审核不通过' %}
+            <input type="button" class="btn btn-default" value="点击重新修改(其实是浏览器后退..)" onclick="history.back()">
     {% endif %}
 
 {% endblock content %}
