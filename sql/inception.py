@@ -44,6 +44,7 @@ class InceptionDao(object):
         #   %s\
         #   inception_magic_commit;" % (masterUser, masterPassword, masterHost, str(masterPort), sqlContent)
         sql = sqlContent
+        # result = self._fetchall(sql, self.inception_host, self.inception_port, '', '', '')
         result = self._fetchall(sql, masterHost, masterPort, masterUser, masterPassword, 'sql')
         return result
 
